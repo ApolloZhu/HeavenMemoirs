@@ -1,4 +1,4 @@
-# HeavenMemoirs - AR相册
+# HeavenMemoirs - AR 相册
 
 线上地址
 https://itunes.apple.com/cn/app/weare/id1304227680?mt=8
@@ -171,17 +171,18 @@ sceneView.addGestureRecognizer(tap)
 
 ### 节点动画
 
-我的另一篇文章中有详细记录[ARKit-动画](https://www.jianshu.com/p/94a41be9477f)
+> 我的另一篇文章中有详细记录[ARKit-动画](https://www.jianshu.com/p/94a41be9477f)
+
+拉近（推远）照片
 
 ```swift
-// 拉近（推远）照片
 // 这只是其中一种方法
 let newPosition  = SCNVector3Make(firstNode.node.worldPosition.x*2, firstNode.node.worldPosition.y*2, firstNode.node.worldPosition.z*2)
 let comeOut = SCNAction.move(to: newPosition, duration: 1.2)
 firstNode.node.runAction(comeOut)
 ```
 
-### 自传/公转
+自传/公转
 
 ```swift
 // 自转
