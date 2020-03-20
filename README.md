@@ -1,21 +1,17 @@
 # HeavenMemoirs - AR相册
 
-ARKit 
-
 线上地址
 https://itunes.apple.com/cn/app/weare/id1304227680?mt=8
 
 ![image](https://github.com/SherlockQi/HKNote/blob/master/image/WeAre.gif)
 
-# HeavenMemoirs
-
 ## 技术点
 
 ### AR初始化
 
-在新建项目时可以直接创建 AR 项目, Xcode 会创造一个 AR 项目的模板.
+在新建项目时可以直接创建 AR 项目, Xcode 会创造一个 AR 项目的模板。
 
-也可以创建普通的项目,在需要实现 AR 功能的控制器中实现如下代码进行初始化.
+也可以创建普通的项目，在需要实现 AR 功能的控制器中实现如下代码进行初始化。
 
 ```swift
 import ARKit
@@ -33,9 +29,9 @@ override func viewDidLoad() {
     let scene = SCNScene()
     sceneView.scene = scene
 
-    //不允许用户操作摄像机
+    // 不允许用户操作摄像机
     sceneView.allowsCameraControl = false
-    //抗锯齿
+    // 抗锯齿
     sceneView.antialiasingMode = .multisampling4X
 }
 
@@ -54,15 +50,15 @@ override func viewWillDisappear(_ animated: Bool) {
 ### 添加节点
 
 ```swift
-//我使用的是 SCNPlane 来充当相框,也可以使用"厚度"很小的 SCNBox
+// 我使用的是 SCNPlane 来充当相框，也可以使用“厚度”很小的 SCNBox
 let photo = SCNPlane(width: 1, height: 1)
 //photo.cornerRadius = 0.01
 let image = UIImage(named: "0")
-//纹路可以使图片,也可以是颜色
+// 纹路可以使图片，也可以是颜色
 photo.firstMaterial?.diffuse.contents = image
 //photo.firstMaterial?.diffuse.contents = UIColor.red
 let photoNode = SCNNode(geometry: photo)
-//节点的位置
+// 节点的位置
 let vector3 = SCNVector3Make(-1, -1, -1) 
 photoNode.position = vector3
 sceneView.scene.rootNode.addChildNode(photoNode)
@@ -73,7 +69,7 @@ let text = SCNText(string: "文字", extrusionDepth: 0.1)
 text.font = UIFont.systemFont(ofSize: 0.4)
 let textNode = SCNNode(geometry: text)
 textNode.position = SCNVector3Make(0, 0, -1)
-//文字的图片/颜色
+// 文字的图片/颜色
 text.firstMaterial?.diffuse.contents = UIImage(named: color)
 sceneView.scene.rootNode.addChildNode(textNode)
 ```
@@ -95,8 +91,8 @@ sceneView.scene.rootNode.addChildNode(textNode)
 
 ### 全景图实现
 
-想象自己站在一个球的球心处,球的内表面涂着壁画,那么是不是就实现了全景图.
-所以用一个Sphere节点包裹着相机节点(也就是0位置节点),再设置Sphere节点的内表面纹理,就实现了功能.
+想象自己站在一个球的球心处，球的内表面涂着壁画，那么是不是就实现了全景图。
+所以用一个 Sphere 节点包裹着相机节点（也就是 0 位置节点），再设置 Sphere 节点的内表面纹理，就实现了功能。
 
 ```swift
 let sphere = SCNSphere(radius: 15)
@@ -151,7 +147,7 @@ self.scene.rootNode.addChildNode(particleNode)
 ### 节点点击事件
 
 ```swift
-//给 场景视图sceneView 添加点击事件
+// 给 场景视图（sceneView）添加点击事件
 let tap = UITapGestureRecognizer(target: self, action: #selector(tapHandle(gesture:)))
 sceneView.addGestureRecognizer(tap)
 ```
@@ -162,7 +158,7 @@ sceneView.addGestureRecognizer(tap)
     guard let firstNode = results.first else {
         return
     }
-    // 这就是点击到的节点 可以对他做一些事情 或者根据这个节点的某些属性执行不同的方法
+    // 这就是点击到的节点。可以对他做一些事情，或者根据这个节点的某些属性执行不同的方法
     let node = firstNode.node.copy() as! SCNNode
     if firstNode.node == self.selectNode {
         ...推远照片...
@@ -178,8 +174,8 @@ sceneView.addGestureRecognizer(tap)
 我的另一篇文章中有详细记录[ARKit-动画](https://www.jianshu.com/p/94a41be9477f)
 
 ```swift
-//拉近(推远)照片
-//这只是其中一种方法
+// 拉近（推远）照片
+// 这只是其中一种方法
 let newPosition  = SCNVector3Make(firstNode.node.worldPosition.x*2, firstNode.node.worldPosition.y*2, firstNode.node.worldPosition.z*2)
 let comeOut = SCNAction.move(to: newPosition, duration: 1.2)
 firstNode.node.runAction(comeOut)
@@ -188,7 +184,7 @@ firstNode.node.runAction(comeOut)
 ### 自传/公转
 
 ```swift
-//自转
+// 自转
 let box = SCNBox(width: boxW, height: boxW, length: boxW, chamferRadius: 0)
 let boxNode = SCNNode(geometry: box)
 boxNode.position = vector3
@@ -199,18 +195,17 @@ emptyNode.addChildNode(boxNode)
 photoRingNode.addChildNode(emptyNode)
 let ringAction = SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: right, z: 0, duration: 2))
 boxNode.runAction(ringAction)
-//公转 把节点加到一个正在自传的节点上就可以了
+// 公转 把节点加到一个正在自传的节点上就可以了
 ```
 
 ### 录屏
 
-录屏是使用ReplayKit完成的
+> 录屏是使用 ReplayKit 完成的
 
 开始录屏
 
 ```swift
-协议      
-RPScreenRecorderDelegate,RPPreviewViewControllerDelegate
+// 协议 : RPScreenRecorderDelegate, RPPreviewViewControllerDelegate
 
 RPScreenRecorder.shared().startRecording(handler: nil)
 RPScreenRecorder.shared().delegate = self
@@ -224,12 +219,12 @@ func screenRecorder(_ screenRecorder: RPScreenRecorder, didStopRecordingWith pre
         DispatchQueue.main.async {
             let string = error?.localizedDescription
             ITTPromptView.showMessage(string, andFrameY: 0)
-            //录制期间失败
+            // 录制期间失败
             self.showFailReplay()
         }
     }
 }
-//录制失败
+// 录制失败
 func showFailReplay() {
     let sb = UIStoryboard(name: "Main", bundle: nil)
     let vc = sb.instantiateViewController(withIdentifier: "HKExplainViewController")
@@ -263,15 +258,15 @@ RPScreenRecorder.shared().stopRecording { (vc, error) in
 ```swift
 func previewController(_ previewController: RPPreviewViewController, didFinishWithActivityTypes activityTypes: Set<String>) {
     print(activityTypes)
-    //取消
+    // 取消
     if activityTypes.count == 0 {
         previewController.dismiss(animated: true, completion: nil)
     }
-    //保存
+    // 保存
     if activityTypes.contains("com.apple.UIKit.activity.SaveToCameraRoll") {
         ITTPromptView .showMessage("视频已保存在相册", andFrameY: 0)
         previewController.dismiss(animated: true, completion: nil)
-        //检测到您刚刚保存了视频 是否想要分享
+        // 检测到您刚刚保存了视频 是否想要分享
         let delay = DispatchTime.now() + .seconds(2)
         DispatchQueue.main.asyncAfter(deadline: delay) {
             self.outputVideo()
@@ -281,3 +276,5 @@ func previewController(_ previewController: RPPreviewViewController, didFinishWi
 ```
 
 作者[简书](https://www.jianshu.com/u/cb1c0acc26c2)
+
+联系作者 xiaqi5477@gmail.com
